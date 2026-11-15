@@ -39,7 +39,7 @@ function isValidDate(text) {
   );
 }
 
-export default function AddExpenseScreen({ expense, onSave, onCancel }) {
+export default function AddExpenseScreen({ user, expense, onSave, onCancel }) {
   const isEditing = expense !== null && expense !== undefined;
 
   const [title, setTitle] = useState(isEditing ? expense.title : '');
@@ -71,6 +71,7 @@ export default function AddExpenseScreen({ expense, onSave, onCancel }) {
 
       if (isEditing) {
         await updateExpense(
+          user.id,
           expense.id,
           title.trim(),
           parseInt(amount, 10),
@@ -80,6 +81,7 @@ export default function AddExpenseScreen({ expense, onSave, onCancel }) {
         );
       } else {
         await addExpense(
+          user.id,
           title.trim(),
           parseInt(amount, 10),
           category,
