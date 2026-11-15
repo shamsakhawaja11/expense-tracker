@@ -21,6 +21,24 @@ function getToday() {
   return `${year}-${month}-${day}`;
 }
 
+function isValidDate(text) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+    return false;
+  }
+
+  const year = parseInt(text.slice(0, 4), 10);
+  const month = parseInt(text.slice(5, 7), 10);
+  const day = parseInt(text.slice(8, 10), 10);
+
+  const check = new Date(year, month - 1, day);
+
+  return (
+    check.getFullYear() === year &&
+    check.getMonth() === month - 1 &&
+    check.getDate() === day
+  );
+}
+
 export default function AddExpenseScreen({ expense, onSave, onCancel }) {
   const isEditing = expense !== null && expense !== undefined;
 
@@ -43,8 +61,8 @@ export default function AddExpenseScreen({ expense, onSave, onCancel }) {
       return;
     }
 
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
-      Alert.alert('Invalid date', 'Use the format YYYY-MM-DD, like 2026-06-16.');
+    if (!isValidDate(date)) {
+      Alert.alert('Invalid date', 'Enter a real date like 2026-06-16.');
       return;
     }
 
