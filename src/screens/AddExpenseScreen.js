@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { addExpense } from '../repositories/expenseRepository';
+import { addExpense, updateExpense } from '../repositories/expenseRepository';
 
 const CATEGORIES = ['Food', 'Transport', 'Bills', 'Shopping', 'Health', 'Other'];
 
@@ -21,12 +21,16 @@ function getToday() {
   return `${year}-${month}-${day}`;
 }
 
-export default function AddExpenseScreen({ onSave, onCancel }) {
-  const [title, setTitle] = useState('');
-  const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState('Food');
-  const [note, setNote] = useState('');
-  const [date, setDate] = useState(getToday());
+export default function AddExpenseScreen({ expense, onSave, onCancel }) {
+  const isEditing = expense !== null && expense !== undefined;
+
+  const [title, setTitle] = useState(isEditing ? expense.title : '');
+  const [amount, setAmount] = useState(isEditing ? String(expense.amount) : '');
+  const [category, setCategory] = useState(isEditing ? expense.category : 'Food');
+  const [note, setNote] = useState(
+    isEditing && expense.note !== null ? expense.note : '',
+  );
+  const [date, setDate] = useState(isEditing ? expense.date : getToday());
 
   async function handleSave() {
     if (title.trim() === '') {
@@ -46,7 +50,26 @@ export default function AddExpenseScreen({ onSave, onCancel }) {
 
     try {
       const cleanNote = note.trim() === '' ? null : note.trim();
-      await addExpense(title.trim(), parseInt(amount, 10), category, cleanNote, date);
+
+      if (isEditing) {
+        await updateExpense(
+          expense.id,
+          title.trim(),
+          parseInt(amount, 10),
+          category,
+          cleanNote,
+          date,
+        );
+      } else {
+        await addExpense(
+          title.trim(),
+          parseInt(amount, 10),
+          category,
+          cleanNote,
+          date,
+        );
+      }
+
       onSave();
     } catch (error) {
       console.log('Save error:', error);
@@ -57,7 +80,9 @@ export default function AddExpenseScreen({ onSave, onCancel }) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView keyboardShouldPersistTaps="handled">
-        <Text style={styles.heading}>Add Expense</Text>
+        <Text style={styles.heading}>
+          {isEditing ? 'Edit Expense' : 'Add Expense'}
+        </Text>
 
         <Text style={styles.label}>Title</Text>
         <TextInput
@@ -83,7 +108,8 @@ export default function AddExpenseScreen({ onSave, onCancel }) {
               key={item}
               style={[styles.chip, category === item && styles.chipSelected]}
               onPress={() => setCategory(item)}>
-              <Text style={category === item ? styles.chipTextSelected : styles.chipText}>
+              <Text
+                style={category === item ? styles.chipTextSelected : styles.chipText}>
                 {item}
               </Text>
             </TouchableOpacity>
@@ -151,4 +177,4 @@ const styles = StyleSheet.create({
   saveButtonText: { color: '#fff', fontWeight: 'bold' },
   cancelButton: { padding: 14, alignItems: 'center', marginTop: 8 },
   cancelButtonText: { color: '#666' },
-}); 
+});

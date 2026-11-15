@@ -8,6 +8,7 @@ import SummaryScreen from './src/screens/SummaryScreen';
 export default function App() {
   const [ready, setReady] = useState(false);
   const [screen, setScreen] = useState('list');
+  const [editingExpense, setEditingExpense] = useState(null);
 
   useEffect(() => {
     async function setup() {
@@ -22,6 +23,21 @@ export default function App() {
     setup();
   }, []);
 
+  function openAdd() {
+    setEditingExpense(null);
+    setScreen('add');
+  }
+
+  function openEdit(expense) {
+    setEditingExpense(expense);
+    setScreen('add');
+  }
+
+  function goToList() {
+    setEditingExpense(null);
+    setScreen('list');
+  }
+
   if (!ready) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -33,20 +49,22 @@ export default function App() {
   if (screen === 'add') {
     return (
       <AddExpenseScreen
-        onSave={() => setScreen('list')}
-        onCancel={() => setScreen('list')}
+        expense={editingExpense}
+        onSave={goToList}
+        onCancel={goToList}
       />
     );
   }
 
   if (screen === 'summary') {
-    return <SummaryScreen onBack={() => setScreen('list')} />;
+    return <SummaryScreen onBack={goToList} />;
   }
 
   return (
     <ExpenseListScreen
-      onAddPress={() => setScreen('add')}
+      onAddPress={openAdd}
       onSummaryPress={() => setScreen('summary')}
+      onEditPress={openEdit}
     />
   );
 }
