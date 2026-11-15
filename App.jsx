@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { createTables } from './src/database/migrations';
+import ExpenseListScreen from './src/screens/ExpenseListScreen';
 
 export default function App() {
   const [ready, setReady] = useState(false);
@@ -18,9 +19,13 @@ export default function App() {
     setup();
   }, []);
 
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>{ready ? 'Database ready' : 'Loading...'}</Text>
-    </View>
-  );
+  if (!ready) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  return <ExpenseListScreen />;
 }
