@@ -3,6 +3,7 @@ import { Text, View } from 'react-native';
 import { createTables } from './src/database/migrations';
 import ExpenseListScreen from './src/screens/ExpenseListScreen';
 import AddExpenseScreen from './src/screens/AddExpenseScreen';
+import SummaryScreen from './src/screens/SummaryScreen';
 
 export default function App() {
   const [ready, setReady] = useState(false);
@@ -38,5 +39,14 @@ export default function App() {
     );
   }
 
-  return <ExpenseListScreen onAddPress={() => setScreen('add')} />;
+  if (screen === 'summary') {
+    return <SummaryScreen onBack={() => setScreen('list')} />;
+  }
+
+  return (
+    <ExpenseListScreen
+      onAddPress={() => setScreen('add')}
+      onSummaryPress={() => setScreen('summary')}
+    />
+  );
 }

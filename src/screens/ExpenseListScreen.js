@@ -17,7 +17,7 @@ import {
 
 const CATEGORIES = ['All', 'Food', 'Transport', 'Bills', 'Shopping', 'Health', 'Other'];
 
-export default function ExpenseListScreen({ onAddPress }) {
+export default function ExpenseListScreen({ onAddPress, onSummaryPress }) {
     const [expenses, setExpenses] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('All');
 
@@ -89,8 +89,12 @@ export default function ExpenseListScreen({ onAddPress }) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.heading}>My Expenses</Text>
-
+            <View style={styles.headerRow}>
+                <Text style={styles.heading}>My Expenses</Text>
+                <TouchableOpacity onPress={onSummaryPress}>
+                    <Text style={styles.summaryLink}>Summary</Text>
+                </TouchableOpacity>
+            </View>
             <View style={styles.filterRow}>
                 {CATEGORIES.map(category => (
                     <TouchableOpacity
@@ -159,4 +163,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     addButtonText: { color: '#fff', fontWeight: 'bold' },
+    headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    summaryLink: { color: '#2563eb', fontWeight: 'bold', fontSize: 16 },
 });
