@@ -12,7 +12,7 @@ import {
   getMonthlyTotals,
 } from '../repositories/expenseRepository';
 
-export default function SummaryScreen({ onBack }) {
+export default function SummaryScreen({ user, onBack }) {
   const [months, setMonths] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(null);
   const [categories, setCategories] = useState([]);
@@ -20,7 +20,7 @@ export default function SummaryScreen({ onBack }) {
   useEffect(() => {
     async function loadMonths() {
       try {
-        const data = await getMonthlyTotals();
+        const data = await getMonthlyTotals(user.id);
         setMonths(data);
         if (data.length > 0) {
           setSelectedMonth(data[0].month);
@@ -39,7 +39,7 @@ export default function SummaryScreen({ onBack }) {
         return;
       }
       try {
-        const data = await getCategoryTotals(selectedMonth);
+        const data = await getCategoryTotals(user.id, selectedMonth);
         setCategories(data);
       } catch (error) {
         console.log('Load categories error:', error);
